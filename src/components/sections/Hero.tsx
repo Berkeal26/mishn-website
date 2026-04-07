@@ -11,12 +11,12 @@ import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { sectionContent } from '@/content/sections.config';
 import { ANIMATION } from '@/lib/utils/constants';
 
-// Sequence: logo 0.2s → headline chars start 0.5s (~1.3s to complete) → subheadline 1.4s → CTA 1.6s
+// 3-beat entrance: logo scale 0.2s → headline chars 0.6s → subheadline 1.5s → CTA 1.8s
 const HERO_DELAYS = {
   logo: 0.2,
-  headline: 0.5,
-  subheadline: 1.4,
-  cta: 1.6,
+  headline: 0.6,
+  subheadline: 1.5,
+  cta: 1.8,
 } as const;
 
 export interface HeroProps {
@@ -33,18 +33,29 @@ export function Hero({ id }: HeroProps) {
     () => {
       if (prefersReduced || !logoRef.current) return;
 
+      // Logo: scale up + fade in — deliberate, premium entrance
       gsap.fromTo(
         logoRef.current,
-        { autoAlpha: 0, y: -16 },
+        { autoAlpha: 0, scale: 0.85 },
         {
           autoAlpha: 1,
-          y: 0,
-          duration: ANIMATION.REVEAL_DURATION,
-          ease: ANIMATION.ENTRANCE_EASE,
+          scale: 1,
+          duration: 0.9,
+          ease: 'power3.out',
           delay: HERO_DELAYS.logo,
           clearProps: 'will-change',
         }
       );
+
+      // Subtle ambient scale on the logo once it's in
+      gsap.to(logoRef.current, {
+        scale: 1.02,
+        duration: 4,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        delay: HERO_DELAYS.logo + 1.2,
+      });
     },
     { scope: sectionRef, dependencies: [prefersReduced] }
   );
@@ -56,8 +67,8 @@ export function Hero({ id }: HeroProps) {
       theme="dark"
       className="flex min-h-screen flex-col items-center justify-center px-6 py-32 text-center md:px-12 lg:px-24"
     >
-      {/* Logo */}
-      <div ref={logoRef} className="mb-8">
+      {/* Logo — beat 1: scale up from nothing */}
+      <div ref={logoRef} className="mb-10">
         <Image
           src="/images/logo/mishn-brandmark.svg"
           alt="MISHN brandmark"
@@ -68,32 +79,32 @@ export function Hero({ id }: HeroProps) {
         />
       </div>
 
-      {/* Headline — chars stagger in after logo */}
+      {/* Headline — beat 2: chars stagger in */}
       <SplitText
         as="h1"
         className="font-[family-name:var(--font-fairview)] text-[clamp(3rem,6vw,5rem)] tracking-[0.04em] text-bone-white"
         splitType="chars"
-        stagger={0.03}
+        stagger={0.035}
         scrollTrigger={false}
         delay={HERO_DELAYS.headline}
       >
         {content.headline}
       </SplitText>
 
-      {/* Subheadline — begins while final chars are still arriving */}
+      {/* Subheadline — beat 3: rise up */}
       <RevealOnScroll
         as="p"
-        className="mx-auto mt-6 max-w-2xl font-[family-name:var(--font-sen)] text-lg text-bone-white/80 md:text-xl"
-        y={20}
+        className="mx-auto mt-8 max-w-2xl font-[family-name:var(--font-sen)] text-lg text-bone-white/80 md:text-xl"
+        y={24}
         delay={HERO_DELAYS.subheadline}
       >
         {content.subheadline}
       </RevealOnScroll>
 
-      {/* CTA — beats after subheadline */}
+      {/* CTA — beat 4: final anchor */}
       <RevealOnScroll
-        className="mt-10"
-        y={20}
+        className="mt-12"
+        y={16}
         delay={HERO_DELAYS.cta}
       >
         <a

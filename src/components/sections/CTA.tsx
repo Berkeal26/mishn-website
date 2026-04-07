@@ -27,7 +27,7 @@ export function CTA({ id }: CTAProps) {
           className="mb-8 font-[family-name:var(--font-fairview)] text-[clamp(2rem,4vw,3rem)] tracking-[0.04em] text-bone-white"
           splitType="words"
         >
-          {content.headline}
+          your mission deserves to be seen
         </SplitText>
 
         <RevealOnScroll
@@ -35,7 +35,7 @@ export function CTA({ id }: CTAProps) {
           className="mb-12 font-[family-name:var(--font-sen)] text-lg leading-relaxed text-bone-white/80"
           y={20}
         >
-          {content.body}
+          in every search, in every answer. let&apos;s build a strategy that puts you in front of the people — and the ai systems — that matter most.
         </RevealOnScroll>
 
         <RevealOnScroll

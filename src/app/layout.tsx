@@ -4,14 +4,14 @@ import { SmoothScroll } from '@/components/ui/SmoothScroll';
 import './globals.css';
 
 const fairview = localFont({
-  src: '../../public/fonts/FairviewSmallCaps.woff2',
+  src: '../../public/fonts/Fairview_SmallCaps.otf',
   variable: '--font-fairview',
   display: 'swap',
   preload: true,
 });
 
 const sen = localFont({
-  src: '../../public/fonts/Sen-Regular.woff2',
+  src: '../../public/fonts/Sen-Regular.ttf',
   variable: '--font-sen',
   display: 'swap',
   preload: true,

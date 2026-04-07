@@ -60,3 +60,16 @@
     }
   }
 }
+
+/* Smooth section-to-section color transitions */
+@layer utilities {
+  .section-dark-to-light {
+    background: linear-gradient(
+      to bottom,
+      var(--color-forest-green) 0%,
+      var(--color-forest-green) 40%,
+      var(--color-bone-white) 60%,
+      white 100%
+    );
+  }
+}

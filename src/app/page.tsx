@@ -2,6 +2,8 @@ import { Navigation } from '@/components/navigation/Navigation';
 import { Hero } from '@/components/sections/Hero';
 import { Problem } from '@/components/sections/Problem';
 import { Positioning } from '@/components/sections/Positioning';
+import { BreathingSection } from '@/components/sections/BreathingSection';
+import { AIVisibility } from '@/components/sections/AIVisibility';
 import { Capabilities } from '@/components/sections/Capabilities';
 import { SocialProof } from '@/components/sections/SocialProof';
 import { Founder } from '@/components/sections/Founder';
@@ -14,6 +16,8 @@ export default function Home() {
       <Hero id="hero" />
       <Problem id="problem" />
       <Positioning id="positioning" />
+      <BreathingSection />
+      <AIVisibility />
       <Capabilities id="capabilities" />
       <SocialProof id="social-proof" />
       <Founder id="founder" />

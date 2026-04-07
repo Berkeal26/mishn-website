@@ -1,10 +1,14 @@
 'use client';
 
 import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap, ScrollTrigger } from '@/lib/animations/gsap-config';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
 import { SplitText } from '@/components/ui/SplitText';
 import { RevealOnScroll } from '@/components/ui/RevealOnScroll';
+import { useReducedMotion } from '@/lib/hooks/useReducedMotion';
 import { sectionContent } from '@/content/sections.config';
+import { BREAKPOINTS } from '@/lib/utils/constants';
 
 export interface FounderProps {
   id: string;
@@ -12,7 +16,48 @@ export interface FounderProps {
 
 export function Founder({ id }: FounderProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const prefersReduced = useReducedMotion();
   const content = sectionContent.founder;
+
+  useGSAP(
+    () => {
+      if (prefersReduced || !imageRef.current || !textRef.current) return;
+
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        `(min-width: ${BREAKPOINTS.LG}px)`,
+        () => {
+          // Image scrolls at 0.85x speed (slower = behind)
+          gsap.to(imageRef.current, {
+            y: -40,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          });
+
+          // Text at normal 1x speed (feels like it overtakes)
+          gsap.to(textRef.current, {
+            y: 20,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          });
+        }
+      );
+    },
+    { scope: sectionRef, dependencies: [prefersReduced] }
+  );
 
   return (
     <SectionWrapper ref={sectionRef} id={id} theme="light" className="py-24 md:py-32">
@@ -26,15 +71,17 @@ export function Founder({ id }: FounderProps) {
         </SplitText>
 
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-          {/* Image placeholder — replace with next/image when photo is available */}
+          {/* Image placeholder with parallax */}
           <RevealOnScroll className="w-full" y={30}>
-            <div
-              aria-hidden="true"
-              className="mx-auto aspect-[4/5] w-full max-w-sm bg-camouflage lg:mx-0"
-            />
+            <div ref={imageRef}>
+              <div
+                aria-hidden="true"
+                className="mx-auto aspect-[4/5] w-full max-w-sm bg-camouflage lg:mx-0"
+              />
+            </div>
           </RevealOnScroll>
 
-          <div>
+          <div ref={textRef}>
             <RevealOnScroll y={20}>
               <h3 className="mb-6 font-[family-name:var(--font-fairview)] text-2xl tracking-[0.04em] text-forest-green">
                 {content.name}
