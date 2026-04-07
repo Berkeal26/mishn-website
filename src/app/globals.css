@@ -1,0 +1,62 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-forest-green: #2F5233;
+  --color-olive-green: #7B8550;
+  --color-gray-blue: #A4B9C9;
+  --color-warm-beige: #EDE6DB;
+  --color-camouflage: #9C8E71;
+  --color-tan: #CAB894;
+  --color-bone-white: #EDE6DB;
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sen), system-ui, sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-forest-green);
+    background-color: #ffffff;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-fairview), serif;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 999;
+    padding: 0.5rem 1rem;
+    background: var(--color-forest-green);
+    color: var(--color-bone-white);
+    font-size: 0.875rem;
+  }
+
+  .skip-to-content:focus {
+    left: 0;
+    outline: 3px solid var(--color-forest-green);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-forest-green);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
