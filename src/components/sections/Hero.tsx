@@ -2,8 +2,7 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
-import { useGSAP } from '@gsap/react';
-import { gsap } from '@/lib/animations/gsap-config';
+import { gsap, ScrollTrigger, useGSAP } from '@/lib/animations/gsap-config';
 import { SplitText } from '@/components/ui/SplitText';
 import { RevealOnScroll } from '@/components/ui/RevealOnScroll';
 import { SectionWrapper } from '@/components/ui/SectionWrapper';
@@ -26,25 +25,72 @@ export interface HeroProps {
 export function Hero({ id }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
   const prefersReduced = useReducedMotion();
   const content = sectionContent.hero;
 
   useGSAP(
     () => {
-      if (prefersReduced || !logoRef.current) return;
+      if (prefersReduced) return;
 
-      gsap.fromTo(
-        logoRef.current,
-        { autoAlpha: 0, y: -16 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: ANIMATION.REVEAL_DURATION,
-          ease: ANIMATION.ENTRANCE_EASE,
-          delay: HERO_DELAYS.logo,
-          clearProps: 'will-change',
-        }
-      );
+      // Logo entrance — deliberate, slow scale-up
+      if (logoRef.current) {
+        gsap.fromTo(
+          logoRef.current,
+          { autoAlpha: 0, scale: 0.85, y: -20 },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            y: 0,
+            duration: 1.0,
+            ease: 'power3.out',
+            delay: HERO_DELAYS.logo,
+            clearProps: 'will-change',
+          }
+        );
+
+        // Scroll-driven logo parallax — subtle upward drift as user scrolls
+        gsap.to(logoRef.current, {
+          y: -60,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1,
+          },
+        });
+      }
+
+      // Scroll-driven fade for hero content as user scrolls past
+      if (headlineRef.current) {
+        gsap.to(headlineRef.current, {
+          autoAlpha: 0,
+          y: -30,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: '30% top',
+            end: '70% top',
+            scrub: 1,
+          },
+        });
+      }
+
+      if (subRef.current) {
+        gsap.to(subRef.current, {
+          autoAlpha: 0,
+          y: -20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: '35% top',
+            end: '65% top',
+            scrub: 1,
+          },
+        });
+      }
     },
     { scope: sectionRef, dependencies: [prefersReduced] }
   );
@@ -69,26 +115,30 @@ export function Hero({ id }: HeroProps) {
       </div>
 
       {/* Headline — chars stagger in after logo */}
-      <SplitText
-        as="h1"
-        className="font-[family-name:var(--font-fairview)] text-[clamp(3rem,6vw,5rem)] tracking-[0.04em] text-bone-white"
-        splitType="chars"
-        stagger={0.03}
-        scrollTrigger={false}
-        delay={HERO_DELAYS.headline}
-      >
-        {content.headline}
-      </SplitText>
+      <div ref={headlineRef as React.RefObject<HTMLDivElement>}>
+        <SplitText
+          as="h1"
+          className="font-[family-name:var(--font-fairview)] text-[clamp(3rem,6vw,5rem)] tracking-[0.04em] text-bone-white"
+          splitType="chars"
+          stagger={0.025}
+          scrollTrigger={false}
+          delay={HERO_DELAYS.headline}
+        >
+          {content.headline}
+        </SplitText>
+      </div>
 
       {/* Subheadline — begins while final chars are still arriving */}
-      <RevealOnScroll
-        as="p"
-        className="mx-auto mt-6 max-w-2xl font-[family-name:var(--font-sen)] text-lg text-bone-white/80 md:text-xl"
-        y={20}
-        delay={HERO_DELAYS.subheadline}
-      >
-        {content.subheadline}
-      </RevealOnScroll>
+      <div ref={subRef as React.RefObject<HTMLDivElement>}>
+        <RevealOnScroll
+          as="p"
+          className="mx-auto mt-6 max-w-2xl font-[family-name:var(--font-sen)] text-lg text-bone-white/80 md:text-xl"
+          y={20}
+          delay={HERO_DELAYS.subheadline}
+        >
+          {content.subheadline}
+        </RevealOnScroll>
+      </div>
 
       {/* CTA — beats after subheadline */}
       <RevealOnScroll

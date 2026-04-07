@@ -25,11 +25,21 @@ export function SocialProof({ id }: SocialProofProps) {
           {content.headline}
         </SplitText>
 
+        {/* Trust signal — directional data point */}
+        <RevealOnScroll className="mb-16 border-b border-bone-white/20 pb-16" y={20}>
+          <p className="font-[family-name:var(--font-fairview)] text-[clamp(3rem,8vw,6rem)] leading-none tracking-[0.04em] text-bone-white">
+            {content.stat.value}
+          </p>
+          <p className="mt-4 max-w-lg font-[family-name:var(--font-sen)] text-base leading-relaxed text-bone-white/70">
+            {content.stat.label}
+          </p>
+        </RevealOnScroll>
+
         <div className="flex flex-col">
           {content.testimonials.map((testimonial, i) => (
             <RevealOnScroll
               key={i}
-              className="border-t border-bone-white/20 py-12 first:border-t-0"
+              className="border-t border-bone-white/20 py-12"
               delay={i * 0.1}
               y={20}
             >

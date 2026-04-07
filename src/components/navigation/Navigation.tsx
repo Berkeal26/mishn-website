@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils/cn';
 
@@ -9,34 +9,63 @@ export interface NavigationProps {
 }
 
 const NAV_LINKS = [
-  { id: 'problem', label: 'The Gap' },
-  { id: 'positioning', label: 'Approach' },
+  { id: 'positioning', label: 'The Shift' },
   { id: 'capabilities', label: 'Services' },
   { id: 'social-proof', label: 'Proof' },
-  { id: 'founder', label: 'Founder' },
   { id: 'contact', label: 'Contact' },
 ];
+
+/** Velocity threshold: hide after sustained downward scroll past this many px/tick */
+const SCROLL_VELOCITY_THRESHOLD = 5;
+const SCROLL_HIDE_DISTANCE = 300; // Minimum scroll before hide logic kicks in
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const lastScrollY = useRef(0);
+  const accumulatedDown = useRef(0);
+
+  const handleScroll = useCallback(() => {
+    const currentY = window.scrollY;
+    const delta = currentY - lastScrollY.current;
+
+    setIsScrolled(currentY > 50);
+
+    // Only hide/show after scrolling past hero
+    if (currentY > SCROLL_HIDE_DISTANCE) {
+      if (delta > SCROLL_VELOCITY_THRESHOLD) {
+        // Scrolling down — accumulate
+        accumulatedDown.current += delta;
+        if (accumulatedDown.current > 150) {
+          setIsHidden(true);
+        }
+      } else if (delta < -SCROLL_VELOCITY_THRESHOLD) {
+        // Scrolling up — show immediately
+        accumulatedDown.current = 0;
+        setIsHidden(false);
+      }
+    } else {
+      setIsHidden(false);
+      accumulatedDown.current = 0;
+    }
+
+    lastScrollY.current = currentY;
+  }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   return (
     <header
       className={cn(
-        'fixed left-0 right-0 top-0 z-50 transition-colors duration-500',
+        'fixed left-0 right-0 top-0 z-50 transition-all duration-500',
         isScrolled
           ? 'bg-forest-green/95 backdrop-blur-sm'
-          : 'bg-transparent'
+          : 'bg-transparent',
+        isHidden && '-translate-y-full'
       )}
     >
       <nav
@@ -97,7 +126,7 @@ export function Navigation() {
           />
         </button>
 
-        {/* Mobile menu — aria-hidden + tabIndex=-1 on links prevents focus when closed */}
+        {/* Mobile menu */}
         <div
           id="mobile-menu"
           className={cn(
