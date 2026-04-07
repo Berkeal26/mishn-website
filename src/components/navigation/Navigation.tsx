@@ -74,6 +74,7 @@ export function Navigation() {
           className="relative z-10 flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
+          aria-controls="mobile-menu"
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
         >
           <span
@@ -96,8 +97,9 @@ export function Navigation() {
           />
         </button>
 
-        {/* Mobile menu */}
+        {/* Mobile menu — aria-hidden + tabIndex=-1 on links prevents focus when closed */}
         <div
+          id="mobile-menu"
           className={cn(
             'fixed inset-0 flex flex-col items-center justify-center bg-forest-green transition-opacity duration-300 md:hidden',
             isOpen
@@ -111,6 +113,7 @@ export function Navigation() {
               <li key={link.id}>
                 <a
                   href={`#${link.id}`}
+                  tabIndex={isOpen ? undefined : -1}
                   className="font-[family-name:var(--font-fairview)] text-2xl tracking-[0.04em] text-bone-white"
                   onClick={() => setIsOpen(false)}
                 >

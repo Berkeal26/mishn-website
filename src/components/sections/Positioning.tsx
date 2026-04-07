@@ -40,7 +40,7 @@ export function Positioning({ id }: PositioningProps) {
                 <h3 className="mb-4 font-[family-name:var(--font-fairview)] text-xl tracking-[0.04em] text-bone-white">
                   {pillar.title}
                 </h3>
-                <p className="font-[family-name:var(--font-sen)] text-base leading-relaxed text-bone-white/70">
+                <p className="font-[family-name:var(--font-sen)] text-base leading-relaxed text-bone-white/80">
                   {pillar.description}
                 </p>
               </RevealOnScroll>
